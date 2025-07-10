@@ -1,8 +1,8 @@
 @testset "Free Propagation" begin
     L = 8
     N = 256
-    Δ = L / N
-    rs = StepRangeLen(-Δ * (N ÷ 2), Δ, N)
+    d = L / N
+    rs = StepRangeLen(-d * (N ÷ 2), d, N)
     zs = LinRange(0.01, 1, 32)
 
     #This is a gaussian mode
@@ -18,9 +18,9 @@
     for n ∈ eachindex(zs, scalings)
         prev_scaling = n > 1 ? scalings[n-1] : 1
         current_scaling = scalings[n] / prev_scaling
-        Δz = n > 1 ? zs[n] - zs[n-1] : zs[n]
-        TurbulentPropagation.angular_spectrum_propagation!(buffer, Δ, Δ, Δz, λ, current_scaling, plan, iplan)
-        Δ *= current_scaling
+        dz = n > 1 ? zs[n] - zs[n-1] : zs[n]
+        TurbulentPropagation.angular_spectrum_propagation!(buffer, d, d, dz, λ, current_scaling, plan, iplan)
+        d *= current_scaling
         @test isapprox(abs2.(buffer * scalings[n]), abs2.(u0), rtol=1e-6)
     end
 end

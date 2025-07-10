@@ -4,30 +4,30 @@
 end
 
 """
-    angular_spectrum_propagation!(u, Δx, Δy, Δz, λ, magnification, plan, iplan)
+    angular_spectrum_propagation!(u, dx, dy, dz, λ, magnification, plan, iplan)
 
 Propagate a field `u` using the angular spectrum method. Overwrites the result in `u`.
 
-`Δx` and `Δy` are the sampling intervals in the x and y directions, respectively.
-`Δz` is the propagation distance.
+`dx` and `dy` are the sampling intervals in the x and y directions, respectively.
+`dz` is the propagation distance.
 `λ` is the wavelength of the light.
 `magnification` is the magnification factor. Should be different from 1
 `plan` and `iplan` are the forward and inverse FFT plans, respectively.
 """
-function angular_spectrum_propagation!(u, Δx, Δy, Δz, λ, magnification, plan, iplan)
+function angular_spectrum_propagation!(u, dx, dy, dz, λ, magnification, plan, iplan)
     ndrange = size(u)
     Nx, Ny = ndrange
-    xs = StepRangeLen(-Δx * (Nx ÷ 2), Δx, Nx)
-    ys = StepRangeLen(-Δy * (Ny ÷ 2), Δy, Ny)
-    qx = fftfreq(Nx, 2π / Δx)
-    qy = fftfreq(Ny, 2π / Δy)
+    xs = StepRangeLen(-dx * (Nx ÷ 2), dx, Nx)
+    ys = StepRangeLen(-dy * (Ny ÷ 2), dy, Ny)
+    qx = fftfreq(Nx, 2π / dx)
+    qy = fftfreq(Ny, 2π / dy)
 
     kernel! = quadratic_phase_kernel!(get_backend(u))
     
     u ./= magnification
-    kernel!(u, xs, ys, π * (1 - magnification) / λ / Δz; ndrange)
+    kernel!(u, xs, ys, π * (1 - magnification) / λ / dz; ndrange)
     plan * u
-    kernel!(u, qx, qy, -Δz * λ / 4π / magnification; ndrange)
+    kernel!(u, qx, qy, -dz * λ / 4π / magnification; ndrange)
     iplan * u
-    kernel!(u, xs, ys, π * (magnification - 1) * magnification / λ / Δz; ndrange)
+    kernel!(u, xs, ys, π * (magnification - 1) * magnification / λ / dz; ndrange)
 end
