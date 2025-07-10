@@ -1,3 +1,3 @@
-using Test, TurbulentPropagation, StructuredLight, FFTW
+using Test, TurbulentPropagation, FFTW
 
 include("free_propagation_test.jl")
