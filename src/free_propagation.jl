@@ -3,6 +3,17 @@
     field[J...] *= cis(α * (qx[J[1]]^2 + qy[J[2]]^2))
 end
 
+"""
+    angular_spectrum_propagation!(u, Δx, Δy, Δz, λ, magnification, plan, iplan)
+
+Propagate a field `u` using the angular spectrum method. Overwrites the result in `u`.
+
+`Δx` and `Δy` are the sampling intervals in the x and y directions, respectively.
+`Δz` is the propagation distance.
+`λ` is the wavelength of the light.
+`magnification` is the magnification factor. Should be different from 1
+`plan` and `iplan` are the forward and inverse FFT plans, respectively.
+"""
 function angular_spectrum_propagation!(u, Δx, Δy, Δz, λ, magnification, plan, iplan)
     ndrange = size(u)
     Nx, Ny = ndrange
