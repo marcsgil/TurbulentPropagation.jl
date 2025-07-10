@@ -5,7 +5,7 @@ Calculate the modified von Karman spectrum for a given wavevector `q`, refractiv
 
 The modified von Karman spectrum is
 ```math
-\\Phi(q) = 0.033 Cₙ² \\frac{\\exp\\left[-|q|^2 / (5.92/l₀)^2\\right]}{\\left[q^2 + (2\\pi/L₀)^2\\right]^{11/6}}
+\\Phi(q) = 0.033 Cₙ² \\frac{\\exp\\left[-|q|^2 / (5.92/l₀)^2\\right]}{\\left[|q|^2 + (2\\pi/L₀)^2\\right]^{11/6}}
 ```
 """
 function modified_von_karman_spectrum(q, Cₙ², L₀, l₀)
@@ -40,6 +40,14 @@ end
 
 """
     hill_andrews_spectrum(q, Cₙ², L₀, l₀)
+
+Calculate the Hill-Andrews spectrum for a given wavevector `q`, refractive index structure constant `Cₙ²`, outer scale `L₀`, and inner scale `l₀`.
+
+The Hill-Andrews is given by
+```math
+\\Phi(q) = \\Phi_{MK}(q) \\left(1 + 1.802 \\sqrt{q^2 / qₗ^2} - 0.254 (q^2 / qₗ^2)^{7/12}\\right)
+```
+where `qₗ = 3.3 / l₀` and ``\\Phi_{MK}`` is the modified von Karman spectrum.
 """
 function hill_andrews_spectrum(q, Cₙ², L₀, l₀)
     q² = sum(abs2, q)
