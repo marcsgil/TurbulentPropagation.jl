@@ -1,8 +1,8 @@
 using TurbulentPropagation, CairoMakie
 
+Cₙ² = 1e-14
 l₀ = 1e-4
 L₀ = 50
-Cₙ² = 1e-14
 
 qs = logrange(1e-2, 1e6, 256)
 kolmogorov = kolmogorov_spectrum.(qs, Cₙ²)
