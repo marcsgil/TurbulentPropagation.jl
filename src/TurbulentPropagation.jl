@@ -1,5 +1,5 @@
 module TurbulentPropagation
-using FFTW, KernelAbstractions, Random
+using FFTW, KernelAbstractions, Random, Integrals, StatsBase
 
 include("free_propagation.jl")
 
@@ -8,4 +8,8 @@ export modified_von_karman_spectrum, von_karman_spectrum, kolmogorov_spectrum, h
 
 include("phase_screens.jl")
 export fourier_phase_screen!
+
+include("screen_diagnostics.jl")
+export structure_from_psd, structure_from_statistics
+
 end

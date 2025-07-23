@@ -1,0 +1,5 @@
+[deps]
+CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
+StructuredLight = "13204c95-a6e5-4c09-8c7b-ee09b09e0944"
+Tullio = "bc48ee85-29a4-5162-ae0b-a64e1601d4bc"
+TurbulentPropagation = "d3a6c85e-6deb-4e4e-a05f-8f8ecd0ba5ac"

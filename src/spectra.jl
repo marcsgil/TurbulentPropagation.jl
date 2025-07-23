@@ -8,7 +8,8 @@ The modified von Karman spectrum is
 \\Phi(q) = 0.033 Cₙ² \\frac{\\exp\\left[-|q|^2 / (5.92/l₀)^2\\right]}{\\left[|q|^2 + (2\\pi/L₀)^2\\right]^{11/6}}
 ```
 """
-function modified_von_karman_spectrum(q, Cₙ², L₀, l₀)
+function modified_von_karman_spectrum(q, param)
+    Cₙ², L₀, l₀ = param
     q² = sum(abs2, q)
     T = promote_type(eltype(q), eltype(Cₙ²), eltype(l₀), eltype(L₀))
     q²ₘ = T(5.92 / l₀)^2
@@ -23,8 +24,9 @@ Calculate the von Karman spectrum for a given wavevector `q`, refractive index s
 
 The von Karman spectrum is a special case of the modified von Karman spectrum with `l₀ = 0`:
 """
-function von_karman_spectrum(q, Cₙ², L₀)
-    modified_von_karman_spectrum(q, Cₙ², L₀, zero(L₀))
+function von_karman_spectrum(q, param)
+    Cₙ², L₀ = param
+    modified_von_karman_spectrum(q, (Cₙ², L₀, zero(L₀)))
 end
 
 """
@@ -34,8 +36,9 @@ Calculate the Kolmogorov spectrum for a given wavevector `q` and refractive inde
 
 The Kolmogorov spectrum is a special case of the von Karman spectrum with `L₀ = Inf`:
 """
-function kolmogorov_spectrum(q, Cₙ²)
-    von_karman_spectrum(q, Cₙ², oftype(Cₙ², Inf))
+function kolmogorov_spectrum(q, param)
+    Cₙ², = param
+    von_karman_spectrum(q, (Cₙ², oftype(Cₙ², Inf)))
 end
 
 """
@@ -49,9 +52,11 @@ The Hill-Andrews is given by
 ```
 where `qₗ = 3.3 / l₀` and ``\\Phi_{MK}`` is the modified von Karman spectrum.
 """
-function hill_andrews_spectrum(q, Cₙ², L₀, l₀)
+function hill_andrews_spectrum(q, param)
+    Cₙ², L₀, l₀ = param
     q² = sum(abs2, q)
     T = promote_type(eltype(q), eltype(Cₙ²), eltype(l₀), eltype(L₀))
     qₗ² = (T(3.3) / l₀)^2
-    modified_von_karman_spectrum(q, Cₙ², L₀, l₀) * (1 + T(1.802) * √(q² / qₗ²) - T(0.254) * (q² / qₗ²)^(7 // 12))
+    isinf(q²) && return zero(T)
+    modified_von_karman_spectrum(q, param) * (1 + T(1.802) * √(q² / qₗ²) - T(0.254) * (q² / qₗ²)^(7 // 12))
 end
