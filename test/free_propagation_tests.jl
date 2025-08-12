@@ -9,10 +9,12 @@
     plan = plan_fft!(u_num, (1, 2))
     iplan = inv(plan)
 
+    method = AngularSpectrum()
+
     zs = LinRange(0, 3, 256)
 
     for z in zs
-        free_propagation!(u_num, step(rs), step(rs), step(zs), 1, plan, iplan)
+        free_propagation!(u_num, step(rs), step(rs), step(zs), 1, plan, iplan, method)
         lg!(u_anl, rs, rs, z; k)
 
         @test isapprox(u_num, u_anl; rtol=1e-2)
