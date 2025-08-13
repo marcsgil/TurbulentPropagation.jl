@@ -31,20 +31,18 @@ spectrum = von_karman_spectrum
 
 nsamples = 1000
 
-dest = Array{ComplexF64}(undef, N, N, nsamples)
-buffer = similar(dest, size(dest, 1), size(dest, 2))
-buffer2 = similar(dest, nsamples, 3, 6, 6)
-plan = plan_fft!(dest, (1, 2))
-iplan = plan_bfft!(dest, (1, 2))
+u = Array{ComplexF64}(undef, N, N, nsamples)
+buffers = TurbulentPropagation.TurbulentPropagationBuffers(u)
 
-TurbulentPropagation.sample_fourier_phase_screen!(dest, buffer, spectrum, param, Δ, Δ, plan, iplan)
-TurbulentPropagation.sample_subharmonic_phase_screen!(dest, buffer2, spectrum, param, Δ, Δ)
+plan = plan_fft!(u, (1, 2))
+iplan = plan_bfft!(u, (1, 2))
 
-TurbulentPropagation.hermitian_randn!(buffer2)
+TurbulentPropagation.sample_fourier_phase_screen!(buffers, spectrum, param, Δ, Δ, plan, iplan)
+TurbulentPropagation.sample_subharmonic_phase_screen!(buffers, spectrum, param, Δ, Δ)
 
 D_anl = [von_karman_structure_function(r, param) for r in rs]
-D_num = statistical_structure_function(real(dest))
-
+D_num = statistical_structure_function(real(buffers.phase))
+##
 with_theme(theme_latexfonts()) do
     fig = Figure()
     ax = Axis(fig[1, 1])

@@ -27,18 +27,18 @@ function hermitian_randn!(dest::AbstractArray{T,4}) where {T<:Complex}
     nothing
 end
 
-function sample_fourier_phase_screen!(dest, buffer, spectrum, param, Δx, Δy, plan, iplan)
-    Nx, Ny = size(dest)
+function sample_fourier_phase_screen!(buffers::TurbulentPropagationBuffers, spectrum, param, Δx, Δy)
+    Nx, Ny = size(buffers.u)
     qx = fftfreq(Nx, 2π / Δx)
     qy = fftfreq(Ny, 2π / Δy)
     ΔA = step(qx) * step(qy)
 
-    kernel! = evaluate_spectrum_kernel!(get_backend(buffer))
-    kernel!(buffer, spectrum, param, ΔA, qx, qy; ndrange=size(buffer))
+    kernel! = evaluate_spectrum_kernel!(get_backend(buffers.spectrum_buffer))
+    kernel!(buffers.spectrum_buffer, spectrum, param, ΔA, qx, qy; ndrange=size(buffers.spectrum_buffer))
 
-    hermitian_randn!(dest, plan)
-    @. dest *= buffer / √(Nx * Ny)
-    iplan * dest
+    hermitian_randn!(buffers.phase, buffers.fft_plan)
+    @. buffers.phase *= buffers.spectrum_buffer / √(Nx * Ny)
+    buffers.fft_plan * buffers.phase
     nothing
 end
 
@@ -47,29 +47,29 @@ end
     dest[i, j, k] += weight * random_numbers[k] * cis(qx * xs[i] + qy * ys[j])
 end
 
-function sample_subharmonic_phase_screen!(dest, buffer, spectrum, param, Δx, Δy)
-    Nx, Ny = size(dest)
+function sample_subharmonic_phase_screen!(buffers::TurbulentPropagationBuffers, spectrum, param, Δx, Δy)
+    Nx, Ny = size(buffers.u)
 
     xs = StepRangeLen(0, Δx, Nx)
     ys = StepRangeLen(0, Δy, Ny)
 
-    kernel! = subharmonic_kernel!(get_backend(dest))
-    ndrange = size(dest)
+    kernel! = subharmonic_kernel!(get_backend(buffers.phase))
+    ndrange = size(buffers.phase)
 
-    N = size(buffer, 4)
-    M = size(buffer, 3)
+    N = size(buffers.subharmonic_randoms, 4)
+    M = size(buffers.subharmonic_randoms, 3)
 
-    hermitian_randn!(buffer)
+    hermitian_randn!(buffers.subharmonic_randoms)
 
-    for n in axes(buffer, 4), m in axes(buffer, 3)
+    for n in axes(buffers.subharmonic_randoms, 4), m in axes(buffers.subharmonic_randoms, 3)
         (n in (N ÷ 2, N ÷ 2 + 1) && m in (M ÷ 2, M ÷ 2 + 1)) && continue
-        for p in axes(buffer, 2)
+        for p in axes(buffers.subharmonic_randoms, 2)
             Δqx = 2π / (Nx * Δx * 3^p)
             Δqy = 2π / (Ny * Δy * 3^p)
             qx = (m - M ÷ 2 - 1 // 2) * Δqx
             qy = (n - N ÷ 2 - 1 // 2) * Δqy
             weight = sqrt(spectrum((qx, qy), param) * Δqx * Δqy)
-            kernel!(dest, view(buffer, :, p, m, n), weight, xs, ys, qx, qy; ndrange)
+            kernel!(buffers.phase, view(buffers.subharmonic_randoms, :, p, m, n), weight, xs, ys, qx, qy; ndrange)
         end
     end
 end

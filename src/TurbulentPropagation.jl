@@ -2,6 +2,9 @@ module TurbulentPropagation
 
 using KernelAbstractions, FFTW, Random
 
+include("utils.jl")
+export TurbulentPropagationBuffers
+
 include("free_propagation.jl")
 export free_propagation!, AngularSpectrum
 
