@@ -73,3 +73,8 @@ function sample_subharmonic_phase_screen!(buffers::TurbulentPropagationBuffers, 
         end
     end
 end
+
+function sample_phase_screen!(buffers::TurbulentPropagationBuffers, spectrum, param, Δx, Δy)
+    sample_fourier_phase_screen!(buffers, spectrum, param, Δx, Δy)
+    sample_subharmonic_phase_screen!(buffers, spectrum, param, Δx, Δy)
+end

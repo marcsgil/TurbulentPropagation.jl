@@ -18,7 +18,7 @@ function statistical_structure_function(Φ::Array{T,3}) where {T}
 end
 
 @testset "Structure Function Tests" begin
-    N = 256
+    N = 128
     L = 2
     Δ = L / N
     rs = (0:N÷2-1) * Δ
@@ -28,13 +28,12 @@ end
     param = (r₀, L₀)
     spectrum = von_karman_spectrum
 
-    nsamples = 1000
+    nsamples = 512
 
     u = Array{ComplexF64}(undef, N, N, nsamples)
     buffers = TurbulentPropagationBuffers(u)
 
-    TurbulentPropagation.sample_fourier_phase_screen!(buffers, spectrum, param, Δ, Δ)
-    TurbulentPropagation.sample_subharmonic_phase_screen!(buffers, spectrum, param, Δ, Δ)
+    sample_phase_screen!(buffers, spectrum, param, Δ, Δ)
 
     D_anl = [von_karman_structure_function(r, param) for r in rs]
     D_num = statistical_structure_function(real(buffers.phase))

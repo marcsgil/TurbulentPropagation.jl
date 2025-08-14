@@ -4,11 +4,13 @@ authors = ["Marcos Gil <marcosgildeoliveira@gmail.com>"]
 version = "0.1.0"
 
 [deps]
+DispatchDoctor = "8d63f2c5-f18a-4cf2-ba9d-b3f60fc568c8"
 FFTW = "7a1cc6ca-52ef-59f5-83cd-3a7055c09341"
 KernelAbstractions = "63c18a36-062a-441e-b654-da1e3ab1ce7c"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 
 [compat]
+DispatchDoctor = "0.4.26"
 FFTW = "1.9.0"
 KernelAbstractions = "0.9.38"
 Random = "1.11.0"

@@ -19,7 +19,7 @@ function statistical_structure_function(Φ::Array{T,3}) where {T}
     mean(statistical_structure_function, slices)
 end
 ##
-N = 256
+N = 128
 L = 2
 Δ = L / N
 rs = (0:N÷2-1) * Δ
@@ -32,13 +32,9 @@ spectrum = von_karman_spectrum
 nsamples = 1000
 
 u = Array{ComplexF64}(undef, N, N, nsamples)
-buffers = TurbulentPropagation.TurbulentPropagationBuffers(u)
+buffers = TurbulentPropagationBuffers(u)
 
-plan = plan_fft!(u, (1, 2))
-iplan = plan_bfft!(u, (1, 2))
-
-TurbulentPropagation.sample_fourier_phase_screen!(buffers, spectrum, param, Δ, Δ, plan, iplan)
-TurbulentPropagation.sample_subharmonic_phase_screen!(buffers, spectrum, param, Δ, Δ)
+sample_phase_screen!(buffers, spectrum, param, Δ, Δ)
 
 D_anl = [von_karman_structure_function(r, param) for r in rs]
 D_num = statistical_structure_function(real(buffers.phase))
