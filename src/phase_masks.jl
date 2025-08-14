@@ -21,7 +21,7 @@ function hermitian_randn!(dest::AbstractArray{T,4}) where {T<:Complex}
     N = size(dest, 3)
     @assert N == size(dest, 4)
     randn!(view(dest, :, :, 1:N÷2, :))
-    dest[:, :, N÷2+1:N, :] = view(dest, :, :, 1:N÷2, :)
+    dest[:, :, N÷2+1:N, :] .= view(dest, :, :, 1:N÷2, :)
     reverse!(view(dest, :, :, N÷2+1:N, :), dims=(3, 4))
     map!(conj, view(dest, :, :, N÷2+1:N, :), view(dest, :, :, N÷2+1:N, :))
     nothing
